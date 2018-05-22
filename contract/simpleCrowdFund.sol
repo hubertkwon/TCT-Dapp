@@ -38,7 +38,7 @@ contract simpleCrowdFund{
         balanceOf[msg.sender] += amount;
         amountRaised += amount;
         tokenReward.transfer(msg.sender, amount/price);
-        FundTransfer(msg.sender,amount,true);
+        emit FundTransfer(msg.sender,amount,true);
     }
 
     modifier afterDeadline() { if(now >= deadline) _;}
@@ -46,15 +46,32 @@ contract simpleCrowdFund{
     function checkGoalReached() external afterDeadline{
         if(amountRaised >= fundingGoal){
             fundingGoalReached = true;
-            GoalReached(beneficiary, amountRaised);
+            emit GoalReached(beneficiary, amountRaised);
         }
         crowdsaleClosed = true;
     }
 
     function safeWithdrawal() external afterDeadline{
-        if(!fundingGoalReached)
+        if(!fundingGoalReached){
+            uint amount = balanceOf[msg.sender];
+            balanceOf[msg.sender] = 0;
+            if(amount > 0){
+                if(msg.sender.send(amount)){
+                    emit FundTransfer(msg.sender, amount, false);
+                }
+                else{
+                    balanceOf[msg.sender] = amount;
+                }
+            }
+        }
+
+        if(fundingGoalReached && beneficiary == msg.sender){
+            if(beneficiary.send(amountRaised)){
+                emit FundTransfer(beneficiary,amountRaised,false);
+            }
+        }else{
+            fundingGoalReached = false;
+        }
 
     }
-
 }
-
