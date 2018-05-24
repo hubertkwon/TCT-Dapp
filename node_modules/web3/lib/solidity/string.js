@@ -13,8 +13,13 @@ SolidityTypeString.prototype.isType = function (name) {
     return !!name.match(/^string(\[([0-9]*)\])*$/);
 };
 
+SolidityTypeString.prototype.staticPartLength = function (name) {
+    return 32 * this.staticArrayLength(name);
+};
+
 SolidityTypeString.prototype.isDynamicType = function () {
     return true;
 };
 
 module.exports = SolidityTypeString;
+

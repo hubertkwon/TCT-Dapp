@@ -29,4 +29,8 @@ SolidityTypeUInt.prototype.isType = function (name) {
     return !!name.match(/^uint([0-9]*)?(\[([0-9]*)\])*$/);
 };
 
+SolidityTypeUInt.prototype.staticPartLength = function (name) {
+    return 32 * this.staticArrayLength(name);
+};
+
 module.exports = SolidityTypeUInt;

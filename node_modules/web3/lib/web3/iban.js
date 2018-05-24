@@ -25,7 +25,7 @@ var BigNumber = require('bignumber.js');
 var padLeft = function (string, bytes) {
     var result = string;
     while (result.length < bytes * 2) {
-        result = '0' + result;
+        result = '00' + result;
     }
     return result;
 };

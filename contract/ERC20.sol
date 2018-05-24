@@ -21,7 +21,7 @@ contract owned {
     //Owner 변경하는 용도
 }
 
-interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public; }
+interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external; }
 //Check
 
 

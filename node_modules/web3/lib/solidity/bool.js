@@ -23,4 +23,8 @@ SolidityTypeBool.prototype.isType = function (name) {
     return !!name.match(/^bool(\[([0-9]*)\])*$/);
 };
 
+SolidityTypeBool.prototype.staticPartLength = function (name) {
+    return 32 * this.staticArrayLength(name);
+};
+
 module.exports = SolidityTypeBool;

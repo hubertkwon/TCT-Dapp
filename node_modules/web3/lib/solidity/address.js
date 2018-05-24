@@ -23,4 +23,9 @@ SolidityTypeAddress.prototype.isType = function (name) {
     return !!name.match(/address(\[([0-9]*)\])?/);
 };
 
+SolidityTypeAddress.prototype.staticPartLength = function (name) {
+    return 32 * this.staticArrayLength(name);
+};
+
 module.exports = SolidityTypeAddress;
+

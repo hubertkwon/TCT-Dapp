@@ -29,4 +29,8 @@ SolidityTypeReal.prototype.isType = function (name) {
     return !!name.match(/real([0-9]*)?(\[([0-9]*)\])?/);
 };
 
+SolidityTypeReal.prototype.staticPartLength = function (name) {
+    return 32 * this.staticArrayLength(name);
+};
+
 module.exports = SolidityTypeReal;
