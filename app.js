@@ -31,6 +31,7 @@ var contract = contractInterface.at("0xC438677CC4DBc77F7c998361A8dFe57E816112Ab"
 
 
 console.log(contract.car(1234));
+
 /*
 contract.setCar.sendTransaction(1234,"Model1","0xF1c6D931C76F2f8082Ba6BA9Bdd9a7566dF7fF2e",{
 	from:web3.eth.accounts[0],
