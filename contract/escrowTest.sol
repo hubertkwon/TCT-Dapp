@@ -1,7 +1,5 @@
 pragma solidity ^0.4.16;
 
-
-
 /**
  * @title SafeMath
  * @dev Math operations with safety checks that throw on error
@@ -92,44 +90,46 @@ interface CarInstant{
     function ownerChange(address _from, address _to, uint _number) external returns(bool success);
 }
 
-contract CarEscrow is owned{
-    using SafeMath for uint256;
-    address tokenAddress;          //current
-    address carDataAddress;
+contract CarEscrow{
+    using SafeMath for uint256;     //SafeMath
+    address tokenAddress;           //current
+    address carDataAddress;         //Car Data Address
     struct Escrow{
-        uint balance;       //balance
+        uint balance;               //balance
         
-        uint number;        //Car Number
-        uint price;         //price
+        uint number;                //Car Number
+        uint price;                 //price
         
-        address seller;     //판매자
-        address buyer;      //구매자
+        address seller;             //판매자
+        address buyer;              //구매자
 
-        bool deposited;      //입금 여부
-        bool buyerApprove;   //구매자 승인
-        bool sellerApprove;  //판매자 승인
+        bool deposited;             //입금 여부
+        bool buyerApprove;          //구매자 승인
+        bool sellerApprove;         //판매자 승인
+
+        uint start;                  //startTime;
+        bool lived;                 //취소, 거래종료 등 -> true
     }
 
-    mapping(address => address) public tradingPartner;
-    mapping(address => Escrow) public escrows;
-    mapping(address => uint) private start;
+    mapping(uint => Escrow) public escrows;
 
-    event Deposit(address indexed _seller, address indexed _buyer, uint tokens);    //입금
-    event Receipt(address _seller,address _buyer,uint number ,uint price);          //거래 성공
-    event Cancel(address _seller, address _buyer);
-    event TimeOut(address _seller,address _buyer, uint _time);
+    event Deposit(uint _orderNumber, address  _buyer, uint tokens);      //입금
+    event Receipt(uint _orderNumber, address _seller,address _buyer,uint number ,uint price);          //거래 영수증
+    event Cancel(uint _orderNumber, address _seller, address _buyer);                  //취소
+    event TimeOut(uint _orderNumber,address _seller,address _buyer, uint _time);      //TimeOut
+
     Escrow escrow;
     ERC20 token;
     CarInstant carInstant;
-
+    uint orderCount;
 
     //생성자 Test 용도
     function CarEscrow () public {
-        tokenAddress = 0x94aC33dDC4587492DDb1D30a0D8F36cf9A4ea46C;
-        carDataAddress = 0x0936A246D4587559379473bb7D198E3337175bDf;
+        tokenAddress = 0x90AE6774df0454F41F6E933A5c6E6feEFF07E29F;
+        carDataAddress = 0x1E27FBc85b562905B0Bba710f37a39e5941B8f72;
         token = ERC20(tokenAddress);
         carInstant = CarInstant(carDataAddress);
-        owner = msg.sender;
+        orderCount = 0;
     }
 
     //생성자
@@ -140,18 +140,28 @@ contract CarEscrow is owned{
         token = ERC20(tokenAddress);
         carInstant = CarInstant(carDataAddress);
         owner = msg.sender;
+        orderCount = 0;
     }
 */
-    modifier afterDeadline(address _seller) { if(now >= start[_seller] + 30 days) _; }
+    modifier afterDeadline(uint _orderNumber) {
+        if(now >= escrows[_orderNumber].start + 30 days) 
+            escrows[_orderNumber].lived = false;
+        _;
+    }
 
+    modifier isLived(uint _orderNumber){
+        require(escrows[_orderNumber].lived);
+        _;
+    }
 
     //Escrow 생성
-    function create(uint _number, uint _price, address _buyer) public{
+    function create(uint _number, uint _price, address _buyer) public returns(uint){
         require(msg.sender == getCarOwner(_number));
         
-        escrows[msg.sender] = Escrow(0, _number, _price, msg.sender, _buyer, false,false,false);
-        start[msg.sender] = now;
-        tradingPartner[msg.sender] = _buyer;
+        orderCount++;
+        escrows[orderCount] = Escrow(0, _number, _price, msg.sender, _buyer, false,false,false,now,true);
+
+        return orderCount;
     }
 
     function getCarOwner(uint _number)public view returns (address){
@@ -159,31 +169,33 @@ contract CarEscrow is owned{
     }
     
 
-    function Approve(address _seller) public{
-        escrow = escrows[_seller];
+    function Approve(uint _orderNumber) public isLived(_orderNumber){
+        escrow = escrows[_orderNumber];
 
+        require(msg.sender == escrow.seller || msg.sender == escrow.buyer);
         if(msg.sender == escrow.seller && escrow.deposited)
-            escrow.sellerApprove = true;
+            escrows[_orderNumber].sellerApprove = true;
         else if(msg.sender == escrow.buyer)
-            escrow.buyerApprove = true;
-        
+            escrows[_orderNumber].buyerApprove = true;
+
         if(escrow.sellerApprove && escrow.buyerApprove){
             //Pay and Exchange;
-            if(!payAndExchange(_seller)){
+            if(!payAndExchange(_orderNumber)){
                 revert();
             }
             //Transfer Token
-            emit Receipt(escrow.seller,escrow.buyer,escrow.number,escrow.price);
+            emit Receipt(_orderNumber,escrow.seller,escrow.buyer,escrow.number,escrow.price);
         }
-        else if(escrow.buyerApprove && !escrow.sellerApprove && now > start[_seller] + 30 days){
+        else if(escrow.buyerApprove && !escrow.sellerApprove && now > escrow.start + 30 days){
             token.transfer(escrow.buyer,escrow.balance);
-            emit TimeOut(escrow.seller,escrow.buyer,now);
-            delete escrows[_seller];
+            emit TimeOut(_orderNumber,escrow.seller,escrow.buyer,now);
+            emit Cancel(_orderNumber,escrow.seller,escrow.buyer);
+            escrows[_orderNumber].lived = false;
         }
     }
 
-    function payAndExchange(address _seller) internal returns (bool){
-        escrow = escrows[_seller];
+    function payAndExchange(uint _orderNumber) internal returns (bool){
+        escrow = escrows[_orderNumber];
         
         if(!carInstant.ownerChange(escrow.seller,escrow.buyer,escrow.number))
             revert();
@@ -197,42 +209,49 @@ contract CarEscrow is owned{
                 revert();
             escrow.balance.sub(escrow.balance);
         }
+
+        escrows[_orderNumber].lived = false;   //거래 종료
         return true;
     }
 
-    function cancel(address _seller) public{
-        escrow = escrows[_seller];
+    function cancel(uint _orderNumber) public isLived(_orderNumber){
+        escrow = escrows[_orderNumber];
 
         if(msg.sender == escrow.seller){
-            escrow.sellerApprove = false;
+            escrows[_orderNumber].sellerApprove = false;
         }
         else if(msg.sender == escrow.buyer){
-            escrow.buyerApprove = false;
+            escrows[_orderNumber].buyerApprove = false;
         }
 
         if(!escrow.sellerApprove && !escrow.buyerApprove){
             if(escrow.deposited){
                 if(!token.transferFrom(this,msg.sender,escrow.balance)) revert();
             }
-            emit Cancel(escrow.seller,escrow.buyer);
-            delete escrows[_seller];
+            emit Cancel(_orderNumber,escrow.seller,escrow.buyer);
+            escrows[_orderNumber].lived = false;
         }
     }
-    function getBalance(address _address) public view returns(uint){
-        return(escrows[_address].balance);
+
+    function getBalance(uint _orderNumber) public view returns(uint){
+        return(escrows[_orderNumber].balance);
     }
 
-    function deposit(address _seller, uint _value) public afterDeadline(_seller){
-        escrow = escrows[_seller];
+    function deposit(uint _orderNumber, uint _value) public afterDeadline(_orderNumber) isLived(_orderNumber){
+        escrow = escrows[_orderNumber];
         require(msg.sender == escrow.buyer);
-        if(!token.transferFrom(msg.sender,this,_value)) revert();
-        escrow.balance = escrow.balance.add(_value);
+        if(!token.transferFrom(msg.sender,this,_value)) {emit ERROR(); revert();}
+        
+        escrows[_orderNumber].balance = escrows[_orderNumber].balance.add(_value);
+        
+        
         if(escrow.balance >= escrow.price){
-            escrow.deposited = true;
+            escrows[_orderNumber].deposited = true;
         }
-        emit Deposit(_seller,msg.sender,_value);
+        emit Deposit(_orderNumber,msg.sender,_value);
     }
 
+/*
     function fee(address _seller) internal{
         
     }
@@ -240,4 +259,6 @@ contract CarEscrow is owned{
     function withdraw() public onlyOwner{
 
     }
+*/
+
 }

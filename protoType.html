@@ -341,9 +341,6 @@
     });
 
     function startApp() {
-        simpleStorageContract = web3.eth.contract(abi);
-        simpleStorage = simpleStorageContract.at(contractAddress);
-
         carInstantContract = web3.eth.contract(abi);
         carInstant = carInstantContract.at(contractAddress);
 
