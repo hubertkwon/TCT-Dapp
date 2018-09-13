@@ -1,4 +1,4 @@
-pragma solidity ^0.4.23;
+pragma solidity ^0.4.24;
 
 //차량데이터 저장 Contract
 contract CarData {
@@ -6,7 +6,6 @@ contract CarData {
     struct PersonInfo{
         string name;
         string phoneNumber;
-        uint[] carList;
     }//사람정보
 
     struct CarInfo{
@@ -144,6 +143,7 @@ contract CarData {
     }
     
     //주인 변경(mainAccount)
+    
     function ownerChange(address _from, address _to, uint _number) public returns(bool){
         require(carDetail[_number].owner == _from);
         require(isPerson[_to]);
@@ -151,4 +151,5 @@ contract CarData {
         emit changeOwner(_from,_to,_number);
         return true;
     }
+    
 }

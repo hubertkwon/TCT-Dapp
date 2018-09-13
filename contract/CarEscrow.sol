@@ -80,7 +80,7 @@ contract ERC20 {
     event Transfer(address indexed from, address indexed to, uint tokens);
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
 }
-interface CarInstant{
+interface CarData{
     function getCarOwner(uint _number) external view returns(address);
     function getRepairInfo(uint _number,uint _count) external view returns(address _from, string _repairInfo, bool _isRepaired);
     function ownerChange(address _from, address _to, uint _number) external returns(bool success);
@@ -116,7 +116,7 @@ contract CarEscrow{
 
     Escrow escrow;
     ERC20 token;
-    CarInstant carInstant;
+    CarData carInstant;
     uint orderCount;
     uint balance;
 
@@ -125,7 +125,7 @@ contract CarEscrow{
         tokenAddress = 0x90AE6774df0454F41F6E933A5c6E6feEFF07E29F;
         carDataAddress = 0x1E27FBc85b562905B0Bba710f37a39e5941B8f72;
         token = ERC20(tokenAddress);
-        carInstant = CarInstant(carDataAddress);
+        carInstant = CarData(carDataAddress);
         orderCount = 0;
     }
 
