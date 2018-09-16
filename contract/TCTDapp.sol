@@ -46,7 +46,6 @@ library SafeMath {
         return c;
     }
 }
-
 contract owned {
     address public owner;
     
@@ -67,7 +66,6 @@ contract owned {
     }
     //Owner 변경하는 용도
 }
-
 contract Token{
     function totalSupply() public constant returns (uint);
     function balanceOf(address tokenOwner) public constant returns (uint balance);
@@ -79,11 +77,10 @@ contract Token{
     event Transfer(address indexed from, address indexed to, uint tokens);
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
 }
-
 contract TCTDapp is owned{
     using SafeMath for uint;
 
-//carData
+    //carData
     struct PersonInfo{
         string name;
         string phoneNumber;
@@ -100,32 +97,6 @@ contract TCTDapp is owned{
         bool isRepaired;
     }//수리 정보
 
-    //등록된 사람인지 확인
-    mapping(address => bool) public isPerson;
-    //등록된 차량인지 확인
-    mapping(uint => bool) public isCar;
-
-    //주소당 사람 정보 저장
-    mapping(address => PersonInfo) public personDetail;
-    //차량 정보 저장
-    mapping(uint => CarInfo) public carDetail;
-
-    //차량 수리 이력 카운트
-    mapping(uint => uint) public repairCount;
-    //차량 수리 이력
-    mapping(uint => mapping(uint => repairRecipt)) public repairList;
-
-    //수리 정보 등록시 이벤트 등록
-    event repairUpdate(address from, uint number, string data);
-    //주인 변경 이벤트
-    event changeOwner(address from, address to, uint number);
-    //사람 등록 이벤트
-    event personRegister(address _who, string _name, string _phoneNumber);
-    //차량 등록 이벤트
-    event carRegister(address _who, uint _number, string _model);
-//end carData
-
-//Escrow
     struct Escrow{
         uint balance;               //balance
         
@@ -141,24 +112,72 @@ contract TCTDapp is owned{
 
         uint start;                  //startTime;
         bool lived;                 //취소, 거래종료 등 -> true
-    }
+    }//Escrow
 
+    //등록된 사람인지 확인
+    mapping(address => bool) public isPerson;
+    //등록된 차량인지 확인
+    mapping(uint => bool) public isCar;
+
+    //주소당 사람 정보 저장
+    mapping(address => PersonInfo) public personDetail;
+    //차량 정보 저장
+    mapping(uint => CarInfo) public carDetail;
+
+    //차량 수리 이력 카운트
+    mapping(uint => uint) public repairCount;
+    //차량 수리 이력
+    mapping(uint => mapping(uint => repairRecipt)) public repairList;
+    //Escrow
     mapping(uint => Escrow) public escrows;
 
-    event Deposit(uint _orderNumber, address  _buyer, uint tokens);      //입금
-    event Receipt(uint _orderNumber, address _seller,address _buyer,uint number ,uint price);          //거래 영수증
-    event Cancel(uint _orderNumber, address _seller, address _buyer);                  //취소
-    event TimeOut(uint _orderNumber,address _seller,address _buyer, uint _time);      //TimeOut
+    //수리 정보 등록시 이벤트 등록
+    event repairUpdate(address from, uint number, string data);
+    //주인 변경 이벤트
+    event changeOwner(address from, address to, uint number);
+    //사람 등록 이벤트
+    event personRegister(address _who, string _name, string _phoneNumber);
+    //차량 등록 이벤트
+    event carRegister(address _who, uint _number, string _model);
+    //입금
+    event Deposit(uint _orderNumber, address  _buyer);                             
+    //거래 영수증
+    event Receipt(uint _orderNumber, address _seller,address _buyer,uint number ,uint price);
+    //취소          
+    event Cancel(uint _orderNumber, address _seller, address _buyer);
+    //TimeOut 
+    event TimeOut(uint _orderNumber,address _seller,address _buyer, uint _time);      
 
     address tokenAddress;
-    uint public orderCount;
+    Token tokenInstance;
+    uint orderCount;
+    Escrow escrow;
+    uint public feeAmount;
+    
+
+    modifier afterDeadline(uint _orderNumber) {
+        if(now >= escrows[_orderNumber].start + 30 days) 
+            escrows[_orderNumber].lived = false;
+        _;
+    }
+
+    modifier isLived(uint _orderNumber){
+        require(escrows[_orderNumber].lived);
+        _;
+    }
+
     constructor(address _tokenAddress) public{
         tokenAddress = _tokenAddress;
+        tokenInstance = Token(_tokenAddress);
         orderCount = 0;
     }
 
-//end Escrow
-//getter
+
+    function changeCurrent(address _tokenAddress) onlyOwner public{
+        tokenAddress = _tokenAddress;
+        tokenInstance = Token(_tokenAddress);
+    }
+
     function getCarOwner(uint _number)public view returns(address){
         return(carDetail[_number].owner);
     }
@@ -171,16 +190,17 @@ contract TCTDapp is owned{
         return(_from,_repairInfo,_isRepaired);
     }
 
-
-    function getPersonDetail(address _who) public view returns(string name, string phoneNumber){
-        return(personDetail[_who].name,personDetail[_who].phoneNumber);
+    function getBalance(uint _orderNumber) public view returns(uint){
+        return(escrows[_orderNumber].balance);
     }
-//end getter
 
-//setter
+    function nowCurrent() public view returns(address){
+        return(tokenAddress);
+    }
 
     //사람 등록
     function setPerson(string _name, string _phoneNumber) public{
+        require(!isPerson[msg.sender]);
         isPerson[msg.sender] = true;
         personDetail[msg.sender].name = _name;
         personDetail[msg.sender].phoneNumber = _phoneNumber;
@@ -210,36 +230,6 @@ contract TCTDapp is owned{
         emit repairUpdate(msg.sender,_to,_repairInfo);
     }
 
-//endsetter
-
-    //주인 변경
-    function ownerChange(address _to, uint _number) public returns(bool){
-        require(carDetail[_number].owner == msg.sender);
-        require(isPerson[_to]);
-        carDetail[_number].owner = _to;
-        emit changeOwner(msg.sender,_to,_number);
-        return true;
-    }
-
-    function ownerChange(address _from, address _to, uint _number) public returns(bool){
-        require(carDetail[_number].owner == _from);
-        require(isPerson[_to]);
-        carDetail[_number].owner = _to;
-        emit changeOwner(_from,_to,_number);
-        return true;
-    }
-
-    modifier afterDeadline(uint _orderNumber) {
-        if(now >= escrows[_orderNumber].start + 30 days) 
-            escrows[_orderNumber].lived = false;
-        _;
-    }
-
-    modifier isLived(uint _orderNumber){
-        require(escrows[_orderNumber].lived);
-        _;
-    }
-
     //Escrow 생성
     function create(uint _number, uint _price, address _buyer) public returns(uint){
         require(msg.sender == getCarOwner(_number));
@@ -249,11 +239,22 @@ contract TCTDapp is owned{
         return orderCount;
     }
 
+    function deposit(uint _orderNumber) public afterDeadline(_orderNumber) isLived(_orderNumber){
+        require(tokenInstance.balanceOf(msg.sender) >= escrows[_orderNumber].price);
+        require(address(escrows[_orderNumber].buyer) == msg.sender);
+        tokenInstance.transferFrom(msg.sender,address(this),escrows[_orderNumber].price);
+        escrows[_orderNumber].balance = escrows[_orderNumber].balance.add(escrows[_orderNumber].price);
+        escrows[_orderNumber].deposited = true;
+        emit Deposit(_orderNumber,msg.sender);
+    }
+
     function Approve(uint _orderNumber) public isLived(_orderNumber){
         require(msg.sender == escrows[_orderNumber].seller || msg.sender == escrows[_orderNumber].buyer);
+
         if(msg.sender == escrows[_orderNumber].seller && escrows[_orderNumber].deposited)
             escrows[_orderNumber].sellerApprove = true;
-        else if(msg.sender == escrows[_orderNumber].buyer)
+        
+        if(msg.sender == escrows[_orderNumber].buyer)
             escrows[_orderNumber].buyerApprove = true;
 
         if(escrows[_orderNumber].sellerApprove && escrows[_orderNumber].buyerApprove){
@@ -265,28 +266,30 @@ contract TCTDapp is owned{
             emit Receipt(_orderNumber,escrows[_orderNumber].seller,escrows[_orderNumber].buyer,escrows[_orderNumber].number,escrows[_orderNumber].price);
         }
         else if(escrows[_orderNumber].buyerApprove && !escrows[_orderNumber].sellerApprove && now > escrows[_orderNumber].start + 30 days){
-            Token(tokenAddress).transfer(escrows[_orderNumber].buyer,escrows[_orderNumber].balance);
+            tokenInstance.transfer(escrows[_orderNumber].buyer,escrows[_orderNumber].balance);
             emit TimeOut(_orderNumber,escrows[_orderNumber].seller,escrows[_orderNumber].buyer,now);
             emit Cancel(_orderNumber,escrows[_orderNumber].seller,escrows[_orderNumber].buyer);
             escrows[_orderNumber].lived = false;
         }
     }
+    
+    function ownerChange(address _from, address _to, uint _number) internal returns(bool){
+        require(carDetail[_number].owner == _from);
+        require(isPerson[_to]);
+        carDetail[_number].owner = _to;
+        emit changeOwner(_from,_to,_number);
+        return true;
+    }
 
     function payAndExchange(uint _orderNumber) internal returns (bool){
-        
-        if(!ownerChange(escrows[_orderNumber].seller,escrows[_orderNumber].buyer,escrows[_orderNumber].number))
+        uint fees;
+        fees = escrows[_orderNumber].balance.div(100);
+        feeAmount = feeAmount.add(fees);
+        escrows[_orderNumber].balance = escrows[_orderNumber].balance.sub(fees);
+        if(!tokenInstance.transfer(escrows[_orderNumber].seller,escrows[_orderNumber].balance))
             revert();
-        
-        if(!Token(tokenAddress).transferFrom(this,escrows[_orderNumber].seller,escrows[_orderNumber].price))
-            revert();
-        escrows[_orderNumber].balance.sub(escrows[_orderNumber].price);
-
-        if(escrows[_orderNumber].balance > 0){
-            if(!Token(tokenAddress).transferFrom(this,escrows[_orderNumber].buyer,escrows[_orderNumber].balance))
-                revert();
-            escrows[_orderNumber].balance.sub(escrows[_orderNumber].balance);
-        }
-
+        ownerChange(escrows[_orderNumber].seller,escrows[_orderNumber].buyer,escrows[_orderNumber].number);
+        escrows[_orderNumber].balance = 0;
         escrows[_orderNumber].lived = false;   //거래 종료
         return true;
     }
@@ -298,28 +301,17 @@ contract TCTDapp is owned{
         else if(msg.sender == escrows[_orderNumber].buyer){
             escrows[_orderNumber].buyerApprove = false;
         }
-
         if(!escrows[_orderNumber].sellerApprove && !escrows[_orderNumber].buyerApprove){
             if(escrows[_orderNumber].deposited){
-                if(!Token(tokenAddress).transferFrom(this,msg.sender,escrows[_orderNumber].balance)) revert();
+                if(!tokenInstance.transfer(escrows[_orderNumber].buyer,escrows[_orderNumber].balance)) revert();
             }
             emit Cancel(_orderNumber,escrows[_orderNumber].seller,escrows[_orderNumber].buyer);
             escrows[_orderNumber].lived = false;
         }
     }
-
-    function getBalance(uint _orderNumber) public view returns(uint){
-        return(escrows[_orderNumber].balance);
-    }
-
-    function deposit(uint _orderNumber, uint _value) public afterDeadline(_orderNumber) isLived(_orderNumber){
-        require(address(escrows[_orderNumber].buyer) == msg.sender);
-        Token(tokenAddress).transferFrom(msg.sender,address(this),_value);
-        escrows[_orderNumber].balance = escrows[_orderNumber].balance.add(_value);
-        if(escrows[_orderNumber].balance >= escrows[_orderNumber].price){
-            escrows[_orderNumber].deposited = true;
-        }
-        emit Deposit(_orderNumber,msg.sender,_value);
+    
+    function withdraw(address addr,uint _value) onlyOwner public{
+        if(!tokenInstance.transfer(addr,_value)) revert();
     }
 
 }

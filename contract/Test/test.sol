@@ -88,7 +88,7 @@ contract Owned {
         _;
     }
 
-    function Owned() public {
+    constructor() public {
         owner = msg.sender;
     }
     function transferOwnership(address _newOwner) public onlyOwner {
@@ -123,7 +123,7 @@ contract FlexibleToken is ERC20Interface, Owned {
     event SymbolUpdated(string oldSymbol, string newSymbol);
     event NameUpdated(string oldName, string newName);
 
-    function FlexibleToken(string _symbol, string _name, uint8 _decimals, uint _initialSupply) public {
+    constructor(string _symbol, string _name, uint8 _decimals, uint _initialSupply) public {
         symbol = _symbol;
         name = _name;
         decimals = _decimals;
