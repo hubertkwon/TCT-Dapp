@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.21;
 
 //lib SafeMath
 library SafeMath {
@@ -81,8 +81,8 @@ contract TCTDapp is owned{
     using SafeMath for uint;
     
     struct CarInfo{
-        string model;
         address owner;
+        string model;
     }//차량 초기 정보
     
     struct repairRecipt{
@@ -94,7 +94,7 @@ contract TCTDapp is owned{
     struct Escrow{
         uint balance;               //balance
         
-        uint number;                //Car Number
+        string _carNumber;                //Car Number
         uint price;                 //price
         
         address seller;             //판매자
@@ -108,32 +108,33 @@ contract TCTDapp is owned{
         bool lived;                 //취소, 거래종료 등 -> true
     }//Escrow
 
+
     //등록된 사람인지 확인
     mapping(address => bool) public isPerson;
+    mapping(address => string) public personName;
     //등록된 차량인지 확인
-    mapping(uint => bool) public isCar;
+    mapping(bytes32 => bool) isCar;
     //차량 정보 저장
-    mapping(uint => CarInfo) public carDetail;
-
+    mapping(bytes32 => CarInfo) carDetail;
     //차량 수리 이력 카운트
-    mapping(uint => uint) public repairCount;
+    mapping(bytes32 => uint) repairCount;
     //차량 수리 이력
-    mapping(uint => mapping(uint => repairRecipt)) public repairList;
+    mapping(bytes32 => mapping(uint => repairRecipt)) repairList;
     //Escrow
     mapping(uint => Escrow) public escrows;
 
     //수리 정보 등록시 이벤트 등록
-    event repairUpdate(address from, uint number, string data);
+    event repairUpdate(address from, string _carNumber, string data);
     //주인 변경 이벤트
-    event changeOwner(address from, address to, uint number);
+    event changeOwner(address from, address to, string _carNumber);
     //사람 등록 이벤트
     event personRegister(address _who);
     //차량 등록 이벤트
-    event carRegister(address _who, uint _number, string _model);
+    event carRegister(address _who, string _carNumber, string _model);
     //입금
     event Deposit(uint _orderNumber, address  _buyer);                             
     //거래 영수증
-    event Receipt(uint _orderNumber, address _seller,address _buyer,uint number ,uint price);
+    event Receipt(uint _orderNumber, address _seller,address _buyer,string _carNumber ,uint price);
     //취소          
     event Cancel(uint _orderNumber, address _seller, address _buyer);
     //TimeOut 
@@ -145,7 +146,6 @@ contract TCTDapp is owned{
     Escrow escrow;
     uint public feeAmount;
     
-
     modifier afterDeadline(uint _orderNumber) {
         if(now >= escrows[_orderNumber].start + 30 days) 
             escrows[_orderNumber].lived = false;
@@ -163,67 +163,87 @@ contract TCTDapp is owned{
         orderCount = 0;
     }
 
-
     function changeCurrent(address _tokenAddress) onlyOwner public{
         tokenAddress = _tokenAddress;
         tokenInstance = Token(_tokenAddress);
     }
-
-    function getCarOwner(uint _number)public view returns(address){
-        return(carDetail[_number].owner);
+//getter
+    function getIsCar(string _carNumber) public view returns(bool){
+        bytes32 carNumber = stringToBytes32(_carNumber);
+        return(isCar[carNumber]);
     }
 
-    function getRepairInfo(uint _number,uint _index) public view returns(address _from, string _repairInfo, bool _isRepaired){
-        require(repairCount[_number] > _index);
-        _from = repairList[_number][_index].from;
-        _repairInfo = repairList[_number][_index].repairInfo;
-        _isRepaired = repairList[_number][_index].isRepaired;
+    function getCarOwner(string _carNumber)public view returns(address){
+        bytes32 carNumber = stringToBytes32(_carNumber);
+        return(carDetail[carNumber].owner);
+    }
+
+    function getCardetail(string _carNumber) public view returns(address,string){
+        bytes32 carNumber = stringToBytes32(_carNumber);
+        return(carDetail[carNumber].owner,carDetail[carNumber].model);
+    }
+
+    function getRepairCount(string _carNumber) public view returns(uint){
+        bytes32 carNumber = stringToBytes32(_carNumber);
+        return(repairCount[carNumber]);
+    }
+
+    function getRepairInfo(string _carNumber,uint _index) public view returns(address _from, string _repairInfo, bool _isRepaired){
+        require(bytes(_carNumber).length <= 32);
+        bytes32 carNumber = stringToBytes32(_carNumber);
+        require(repairCount[carNumber] > _index);
+        _from = repairList[carNumber][_index].from;
+        _repairInfo = repairList[carNumber][_index].repairInfo;
+        _isRepaired = repairList[carNumber][_index].isRepaired;
         return(_from,_repairInfo,_isRepaired);
     }
-
-    function getBalance(uint _orderNumber) public view returns(uint){
-        return(escrows[_orderNumber].balance);
-    }
+//end getter
 
     function nowCurrent() public view returns(address){
         return(tokenAddress);
     }
 
     //사람 등록
-    function setPerson() public{
+    function setPerson(string name) public returns(bool){
         require(!isPerson[msg.sender]);
         isPerson[msg.sender] = true;
+        personName[msg.sender] = name;
         emit personRegister(msg.sender);
+        return true;
     }
 
     //초기 차량 등록
-    function setCar(uint _number,string _model)public {
-        require(!isCar[_number]);
+    function setCar(string _carNumber,string _model)public {
+        require(bytes(_carNumber).length <= 32);
+        bytes32 carNumber = stringToBytes32(_carNumber);
+        require(!isCar[carNumber]);
         require(isPerson[msg.sender]);
-        carDetail[_number].model = _model;
-        carDetail[_number].owner = msg.sender;
-        isCar[_number] = true;
-        emit carRegister(msg.sender,_number,_model);
+        carDetail[carNumber].model = _model;
+        carDetail[carNumber].owner = msg.sender;
+        isCar[carNumber] = true;
+        emit carRegister(msg.sender,_carNumber,_model);
     }
 
     //수리이력 등록
-    function setRepairInfo(uint _to,string _repairInfo,bool _isRepaired)public {
+    function setRepairInfo(string _carNumber,string _repairInfo,bool _isRepaired)public {
         require(isPerson[msg.sender]);
-        require(isCar[_to]);
+        require(bytes(_carNumber).length <= 32);
+        bytes32 carNumber = stringToBytes32(_carNumber);
+        require(isCar[carNumber]);
 
-        uint count = repairCount[_to];
-        repairList[_to][count] = repairRecipt(msg.sender,_repairInfo,_isRepaired);
+        uint count = repairCount[carNumber];
+        repairList[carNumber][count] = repairRecipt(msg.sender,_repairInfo,_isRepaired);
         
-        repairCount[_to]++;
+        repairCount[carNumber]++;
 
-        emit repairUpdate(msg.sender,_to,_repairInfo);
+        emit repairUpdate(msg.sender,_carNumber,_repairInfo);
     }
 
     //Escrow 생성
-    function create(uint _number, uint _price, address _buyer) public returns(uint){
-        require(msg.sender == getCarOwner(_number));
+    function escrowCreate(string _carNumber, uint _price, address _buyer) public returns(uint){
+        require(msg.sender == getCarOwner(_carNumber));
         orderCount++;
-        escrows[orderCount] = Escrow(0, _number, _price, msg.sender, _buyer, false,false,false,now,true);
+        escrows[orderCount] = Escrow(0, _carNumber, _price, msg.sender, _buyer, false,false,false,now,true);
 
         return orderCount;
     }
@@ -231,6 +251,7 @@ contract TCTDapp is owned{
     function deposit(uint _orderNumber) public afterDeadline(_orderNumber) isLived(_orderNumber){
         require(tokenInstance.balanceOf(msg.sender) >= escrows[_orderNumber].price);
         require(address(escrows[_orderNumber].buyer) == msg.sender);
+        require(!escrows[_orderNumber].deposited);
         tokenInstance.transferFrom(msg.sender,address(this),escrows[_orderNumber].price);
         escrows[_orderNumber].balance = escrows[_orderNumber].balance.add(escrows[_orderNumber].price);
         escrows[_orderNumber].deposited = true;
@@ -252,7 +273,7 @@ contract TCTDapp is owned{
                 revert();
             }
             //Transfer Token
-            emit Receipt(_orderNumber,escrows[_orderNumber].seller,escrows[_orderNumber].buyer,escrows[_orderNumber].number,escrows[_orderNumber].price);
+            emit Receipt(_orderNumber,escrows[_orderNumber].seller,escrows[_orderNumber].buyer,escrows[_orderNumber]._carNumber,escrows[_orderNumber].price);
         }
         else if(escrows[_orderNumber].buyerApprove && !escrows[_orderNumber].sellerApprove && now > escrows[_orderNumber].start + 30 days){
             tokenInstance.transfer(escrows[_orderNumber].buyer,escrows[_orderNumber].balance);
@@ -262,11 +283,13 @@ contract TCTDapp is owned{
         }
     }
     
-    function ownerChange(address _from, address _to, uint _number) internal returns(bool){
-        require(carDetail[_number].owner == _from);
+    function ownerChange(address _from, address _to, string _carNumber) internal returns(bool){
+        require(bytes(_carNumber).length <= 32);
+        bytes32 carNumber = stringToBytes32(_carNumber);
+        require(carDetail[carNumber].owner == _from);
         require(isPerson[_to]);
-        carDetail[_number].owner = _to;
-        emit changeOwner(_from,_to,_number);
+        carDetail[carNumber].owner = _to;
+        emit changeOwner(_from,_to,_carNumber);
         return true;
     }
 
@@ -277,7 +300,7 @@ contract TCTDapp is owned{
         escrows[_orderNumber].balance = escrows[_orderNumber].balance.sub(fees);
         if(!tokenInstance.transfer(escrows[_orderNumber].seller,escrows[_orderNumber].balance))
             revert();
-        ownerChange(escrows[_orderNumber].seller,escrows[_orderNumber].buyer,escrows[_orderNumber].number);
+        ownerChange(escrows[_orderNumber].seller,escrows[_orderNumber].buyer,escrows[_orderNumber]._carNumber);
         escrows[_orderNumber].balance = 0;
         escrows[_orderNumber].lived = false;   //거래 종료
         return true;
@@ -299,8 +322,20 @@ contract TCTDapp is owned{
         }
     }
     
+    //Fees withdraw
     function withdraw(address addr,uint _value) onlyOwner public{
         if(!tokenInstance.transfer(addr,_value)) revert();
+    }   
+
+    //string to Bytes32
+    function stringToBytes32(string memory source) pure internal returns(bytes32 result) {
+        bytes memory tempEmptyStringTest = bytes(source);
+        if (tempEmptyStringTest.length == 0) {
+            return 0x0;
+        }
+        assembly {
+            result := mload(add(source, 32))
+        }
     }
 
 }
