@@ -79,12 +79,6 @@ contract Token{
 }
 contract TCTDapp is owned{
     using SafeMath for uint;
-
-    //carData
-    struct PersonInfo{
-        string name;
-        string phoneNumber;
-    }//사람정보
     
     struct CarInfo{
         string model;
@@ -118,9 +112,6 @@ contract TCTDapp is owned{
     mapping(address => bool) public isPerson;
     //등록된 차량인지 확인
     mapping(uint => bool) public isCar;
-
-    //주소당 사람 정보 저장
-    mapping(address => PersonInfo) public personDetail;
     //차량 정보 저장
     mapping(uint => CarInfo) public carDetail;
 
@@ -136,7 +127,7 @@ contract TCTDapp is owned{
     //주인 변경 이벤트
     event changeOwner(address from, address to, uint number);
     //사람 등록 이벤트
-    event personRegister(address _who, string _name, string _phoneNumber);
+    event personRegister(address _who);
     //차량 등록 이벤트
     event carRegister(address _who, uint _number, string _model);
     //입금
@@ -199,12 +190,10 @@ contract TCTDapp is owned{
     }
 
     //사람 등록
-    function setPerson(string _name, string _phoneNumber) public{
+    function setPerson() public{
         require(!isPerson[msg.sender]);
         isPerson[msg.sender] = true;
-        personDetail[msg.sender].name = _name;
-        personDetail[msg.sender].phoneNumber = _phoneNumber;
-        emit personRegister(msg.sender,_name,_phoneNumber);
+        emit personRegister(msg.sender);
     }
 
     //초기 차량 등록
