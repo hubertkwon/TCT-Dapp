@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Moderna - Bootstrap 3 flat corporate template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <!-- css -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
+    <link href="css/jcarousel.css" rel="stylesheet" />
+    <link href="css/flexslider.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+
+
+    <!-- Theme skin -->
+    <link href="skins/default.css" rel="stylesheet" />
+
+    <style>
+        .carousel-control.right,
+        .carousel-control.left {
+            background-image: none;
+            color: #3071a9;
+        }
+        
+        .carousel-indicators li {
+            border-color: #3071a9;
+        }
+        
+        .carousel-indicators li.active {
+            background-color: #3071a9;
+        }
+        
+        tr > td{
+    height: 45px;
+}
+
+tr>td:first-child{
+    font-weight: bold;
+    text-align:center;
+    width:10%;
+    min-width: 10%;
+}
+
+tr>td:nth-child(2){
+    width:30%;
+}
+   
+
+#map {
+    height: 400px;
+    width: 100%;
+}  
+        
+    </style>
+
+</head>
+
+<body>
+    <div id="wrapper">
+        <!-- start header -->
+        <header>
+            <div class="navbar navbar-default navbar-static-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="index.html"><span>B</span>lockcar</a>
+                    </div>
+                    <div class="navbar-collapse collapse ">
+                       
+                       
+                        <ul class="nav navbar-nav">
+                            <li><a href="#"><span class="fa fa-address-card-o"></span> <span id = "contractAddress"></span></a></li>
+                            <li><a href="#"></a></li>
+                            <li><a href="#"><span id ="token_value"></span></a></li>
+                            <li><a href="#">BCS <span class="fa fa-plus-square"></span></a></li>
+                            <li><a href="#"></a></li>
+                            <li><a href="#"><span id ="Ether_value"></span></a></li>
+                            <li><a href="#">ETH <span class="fa fa-repeat"></span></a></li>
+                            
+                        </ul>
+                    </div>
+                    <div class="navbar-collapse collapse ">
+                       
+                       
+                        <ul class="nav navbar-nav">
+                            <li class="active"><a href="index.html">Home</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle " data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false">How To Use <b class=" icon-angle-down"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Typography</a></li>
+                                    <li><a href="#">Components</a></li>
+                                    <li><a href="#">Pricing box</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="buycar.html">Buy Car</a></li>
+                            <li><a href="sellcar.html">Sell Car</a></li>
+                            <li><a href="repair.html">Repair Details</a></li>
+                            <li><a href="mypage.html">MY PAGE</a></li>
+                            <li><a><button type="button" class="btn btn-theme"><span id="isRegist"></span></button></a></li>
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+        </header>
+        <!-- end header -->
+        <section id="inner-headline">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="breadcrumb">
+                            <li><a href="#"><i class="fa fa-home"></i></a><i class="icon-angle-right"></i></li>
+                            <li><a href="#">BUY CAR</a><i class="icon-angle-right"></i></li>
+                            <li class="active">INFO</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="carousel slide" data-ride="carousel" id="carousel-1" style="padding:10%;">
+                            <div class="carousel-inner" role="listbox">
+                                <div class="item active">
+                                    <img src="img/dummies/car1.jpg" alt="Slide Image" class="w-100" style="height:400px;"></div>
+                                <div class="item"><img src="img/dummies/car1.jpg" alt="Slide Image" class="w-100" style="height:400px;"></div>
+                                <div class="item"><img src="img/dummies/car1.jpg" alt="Slide Image" class="w-100" style="height:400px;"></div>
+
+                            </div>
+                            <div><a class="left carousel-control" href="#carousel-1" role="button" data-slide="prev"><i class="fa fa-angle-left fa-2x"></i></a>
+                                <a class="right carousel-control" href="#carousel-1" role="button" data-slide="next"><i class="fa fa-angle-right fa-2x"></i></a>
+                            </div>
+                            <ol class="carousel-indicators">
+                                <li data-target="#carousel-1" data-slide-to="0" class="active"></li>
+                                <li data-target="#carousel-1" data-slide-to="1"></li>
+                                <li data-target="#carousel-1" data-slide-to="2"></li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h2>BMW X1</h2>
+                        <hr>
+                        <form>
+                            <table border=0>
+                                <tbody>
+                                    <tr>
+                                        <td>제조사</td>
+                                        <td>BMW</td>
+                                    </tr>
+                                    <tr>
+                                        <td>등급</td>
+                                        <td>BMW X1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>변속기</td>
+                                        <td>자동</td>
+                                    </tr>
+                                    <tr>
+                                        <td>연식</td>
+                                        <td>2018년 09월</td>
+                                    </tr>
+                                    <tr>
+                                        <td>연료</td>
+                                        <td>경유</td>
+                                    </tr>
+                                    <tr>
+                                        <td>사고유무</td>
+                                        <td>無</td>
+                                    </tr>
+                                    <tr>
+                                        <td>주행거리</td>
+                                        <td>35220km</td>
+                                    </tr>
+                                    <tr>
+                                        <td>특이사항</td>
+                                        <td>네비게이션 장착</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </form>
+                    </div>
+
+                </div>
+                <!-- divider -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="solidline">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <center><a href="purchase.html"><button  class="btn btn-large btn-theme">구매하기</button></a> <button class="btn btn-large btn-success">찜하기</button></center>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="solidline">
+                        </div>
+                    </div>
+                </div>
+                
+                
+                 <div class="row">
+                    
+                    <div class="col-lg-12">
+                        
+                        <div><h3><span class="fa fa-cog" aria-hidden="true"></span> 정비이력</h3></div>
+                            <hr>
+                        <div class="panel panel-default">
+                    <!-- Table -->
+                    <table id="price_table" class="table">
+                        <tbody>
+                            <tr>
+                                <th>수리내용</th>
+                                <th>정비자</th>
+                                <th>일자</th>
+                            </tr>
+                            <tr>
+                                <td>엔진교체</td>
+                                <td>권민준</td>
+                                <td>2018년 09월 16일</td>
+                            </tr>
+                            <tr>
+                                <td>시트교체</td>
+                                <td>권민준</td>
+                                <td>2018년 09월 16일</td>
+                            </tr>
+                    </table>
+                </div>
+                     </div>
+                </div>
+                
+                
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="solidline">
+                        </div>
+                    </div>
+                </div>
+
+
+                
+                <div class="row">
+                    
+                    <div class="col-lg-12">
+                        <div id="show_map">
+                            <div><h3><span class="fa fa-map-marker" aria-hidden="true"></span> 위치</h3></div>
+                            <hr>
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                    <script>
+                        function initMap() {
+                            var uluru = {
+                                lat: -25.363,
+                                lng: 131.044
+                            };
+                            var map = new google.maps.Map(document.getElementById('map'), {
+                                zoom: 4,
+                                center: uluru
+                            });
+                            var marker = new google.maps.Marker({
+                                position: uluru,
+                                map: map
+                            });
+                        }
+                    </script>
+                    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcvr_w848yoGMC010-TOUFbFIG8aHTGVE&callback=initMap">
+                    </script>
+
+
+                </div>
+                <!-- divider -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="solidline">
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        </section>
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="widget">
+                            <h5 class="widgetheading">Get in touch with us</h5>
+                            <address>
+                                <strong>Moderna company Inc</strong><br>
+                                Modernbuilding suite V124, AB 01<br>
+                                Someplace 16425 Earth </address>
+                            <p>
+                                <i class="icon-phone"></i> (123) 456-7890 - (123) 555-7891 <br>
+                                <i class="icon-envelope-alt"></i> email@domainname.com
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="widget">
+                            <h5 class="widgetheading">Pages</h5>
+                            <ul class="link-list">
+                                <li><a href="#">Press release</a></li>
+                                <li><a href="#">Terms and conditions</a></li>
+                                <li><a href="#">Privacy policy</a></li>
+                                <li><a href="#">Career center</a></li>
+                                <li><a href="#">Contact us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="widget">
+                            <h5 class="widgetheading">Latest posts</h5>
+                            <ul class="link-list">
+                                <li><a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a></li>
+                                <li><a href="#">Pellentesque et pulvinar enim. Quisque at tempor ligula</a></li>
+                                <li><a href="#">Natus error sit voluptatem accusantium doloremque</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="widget">
+                            <h5 class="widgetheading">Flickr photostream</h5>
+                            <div class="flickr_badge">
+                                <script type="text/javascript" src="http://www.flickr.com/badge_code_v2.gne?count=8&amp;display=random&amp;size=s&amp;layout=x&amp;source=user&amp;user=34178660@N03"></script>
+                            </div>
+                            <div class="clear">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="sub-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="copyright">
+                                <p>&copy; Moderna Theme. All right reserved.</p>
+                                <div class="credits">
+                                    <!--
+                    All the links in the footer should remain intact.
+                    You can delete the links only if you purchased the pro version.
+                    Licensing information: https://bootstrapmade.com/license/
+                    Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=Moderna
+                  -->
+                                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ul class="social-network">
+                                <li><a href="#" data-placement="top" title="Facebook"><i class="fa fa-facebook"></i></a></li>
+                                <li><a href="#" data-placement="top" title="Twitter"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="#" data-placement="top" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href="#" data-placement="top" title="Pinterest"><i class="fa fa-pinterest"></i></a></li>
+                                <li><a href="#" data-placement="top" title="Google plus"><i class="fa fa-google-plus"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
+    <!-- javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.easing.1.3.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.fancybox.pack.js"></script>
+    <script src="js/jquery.fancybox-media.js"></script>
+    <script src="js/google-code-prettify/prettify.js"></script>
+    <script src="js/portfolio/jquery.quicksand.js"></script>
+    <script src="js/portfolio/setting.js"></script>
+    <script src="js/jquery.flexslider.js"></script>
+    <script src="js/animate.js"></script>
+    <script src="js/custom.js"></script>
+    <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js'></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/utf8.js"></script>
+
+</body>
+
+</html>
