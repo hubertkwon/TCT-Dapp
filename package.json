@@ -1,7 +1,7 @@
 {
   "name": "car",
   "version": "1.0.0",
-  "description": "",
+  "description": "study Dapp",
   "main": "truffle.js",
   "directories": {
     "test": "test"
@@ -22,5 +22,13 @@
     "express-error-handler": "^1.1.0",
     "express-session": "^1.15.6",
     "mysql": "^2.16.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hunsuk218/TCT-Dapp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hunsuk218/TCT-Dapp/issues"
+  },
+  "homepage": "https://github.com/hunsuk218/TCT-Dapp#readme"
 }
