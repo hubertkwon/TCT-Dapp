@@ -63,6 +63,8 @@ App = {
             console.error(error);
         }
         document.getElementById("Ether_value").innerHTML = Ether_value;
+  
+
     });
 
 
@@ -72,14 +74,14 @@ App = {
 
       token_value.then(function(result) { 
         document.getElementById("token_value").innerHTML = result;//will log results.
+        document.getElementById("token_value1").innerHTML = result;
      });
       
     });
 
     App.contracts.TCTDapp.deployed().then(function(instance){  //사람인지 아닌지 확인하기
-      var is_person = instance.isPerson(account)
+      var is_person = instance.isPerson(account);
       is_person.then(function(result){
-        console.log(result);
         if(result === true)
         {
           document.getElementById("isRegist").innerHTML = "안녕하세요";
@@ -96,6 +98,103 @@ App = {
     
     });
 
+    App.contracts.TCTDapp.deployed().then(function(instance){
+
+      var info_escrows = instance.escrows.call(3);
+
+      info_escrows.then(function(result){
+        console.log(result[3]);
+        console.log(result);
+        
+      });
+    });
+
+    App.contracts.TCTDapp.deployed().then(function(instance){  //판매자 주소
+
+      var info_escrows = instance.escrows.call(3); // 거래번호로 바꿔줘야함
+
+
+      info_escrows.then(function(result){
+        var seller_CarName = result[1];
+        if(seller_CarName ==="")
+        {
+          document.getElementById("seller_CarName").innerHTML = "";
+        }
+        else{
+          document.getElementById("seller_CarName").innerHTML = seller_CarName;
+        }
+        
+
+
+        var seller_address = result[3]; //DB에서 가져올 정보
+        if(seller_address ==="0x0000000000000000000000000000000000000000")
+        {
+          document.getElementById("seller_address").innerHTML ="";
+        }
+        else{
+          document.getElementById("seller_address").innerHTML = seller_address;
+        }
+        
+        
+
+        var buyer_address = result[4];
+       
+          document.getElementById("buyer_address").innerHTML = account;
+        
+        
+
+
+        var deposite_is = result[5];
+        if(deposite_is === true)
+        {
+          document.getElementById("deposite_is").innerHTML = "입금완료"
+        }
+        else{
+          document.getElementById("deposite_is").innerHTML = "입금대기"
+        }
+
+
+        var buyer_approve = result[6];
+        if(buyer_approve === true)
+        {
+          document.getElementById("buyer_approve").innerHTML = "구매자 승인완료"
+        }
+        else{
+          document.getElementById("buyer_approve").innerHTML = "구매자 승인대기"
+        }
+
+        var seller_approve = result[7];
+        if(seller_approve === true)
+        {
+          document.getElementById("seller_approve").innerHTML = "구매자 승인완료"
+        }
+        else{
+          document.getElementById("seller_approve").innerHTML = "구매자 승인대기"
+        }
+
+
+        var lived = result[8];
+        if(lived === true)
+        {
+          document.getElementById("lived").innerHTML = "거래 진행중"
+        }
+        else{
+          document.getElementById("lived").innerHTML = "거래 대기중"
+        }
+      });
+
+      
+    });
+
+
+
+
+
+
+    
+
+
+    
     });
   },
 
@@ -167,26 +266,24 @@ App = {
 setRepairInfo: function() {	
   
   var materialContactFormName = $('#materialContactFormName').val();
-  
 
-  
-  var repair_Check = document.getElementById('form_check_input').value;
+
+  var repair_Check = $('input[name="inlineMaterialRadiosExample"]:checked').val();
   var repair_Check_Value;
   if(repair_Check === 'Repair_Ok')
   {
-    repair_Check_Value = document.getElementById('ok').value;
+    repair_Check_Value = true;
   }
   else if(repair_Check === 'Repair_No')
   {
-    repair_Check_Value = document.getElementById('no').value;
-  }
-  else if(repair_Check === 'Repair_Ongoing')
-  {
-    repair_Check_Value = document.getElementById('ongoing').value;
+    repair_Check_Value = false;
   }
   
-  var repair_Check_Values = true;
-  // var checkedValue = $('.form-check-label:checked').val();
+
+
+  var form_check_input1 = $('input[name="RpInfo"]:checked').val();
+
+
 
 
 web3.eth.getAccounts(function(error, accounts){
@@ -198,14 +295,15 @@ web3.eth.getAccounts(function(error, accounts){
  
 
 App.contracts.TCTDapp.deployed().then(function(instance){
-  return instance.setCar(materialContactFormName, repair_Check_Value, repair_Check_Values, {from: account});
+  return instance.setRepairInfo(materialContactFormName,  form_check_input1, repair_Check_Value, {from: account});
 }).then(function() {
   //return App.callCar();
   
 })
 console.log(materialContactFormName);
+console.log(form_check_input1);
 console.log(repair_Check_Value);
-console.log(repair_Check_Values);
+
  
 });
 },
@@ -214,24 +312,36 @@ console.log(repair_Check_Values);
 
 
   callCar: function() {
+    var materialContactFormName = $('#materialContactFormName').val();
+
     web3.eth.getAccounts(function(error, accounts){
       if(error) {
         console.log(error);
       }
   
       var account = accounts[0];
-
+    
       App.contracts.TCTDapp.deployed().then(function(instance){
-        return instance.getMyCarList();
-      }).then(function(cars){
-        for(i = 0; i<cars.length; i++){
-          document.write(cars[i]);
-          document.write("\n");
-        }
-        console.log(cars);
-        console.log("load complete");
+        
+        var count = instance.getRepairCount(materialContactFormName);
+
+        count.then(function(result){
+          
+          var count = result.toNumber();
+          
+          
+            
+          return instance.getRepairInfo(materialContactFormName, 0,{from: account});
+            
+          
+        }).then(function(repair_result){
+            console.log(repair_result);
+
+        })
+        
+        });
       });
-});
+
   },
 
   withdrawCall: function() {
@@ -295,11 +405,126 @@ console.log(repair_Check_Values);
 });
   },
 
-	
+  CoinApprove: function() {	
+    var Coin_Approve = $('#Coin_Approve').val();
+  web3.eth.getAccounts(function(error, accounts){
+    if(error) {
+      console.log(error);
+    }
+    
+    var account = accounts[0];
+   
+
+  App.contracts.FlexibleToken.deployed().then(function(instance){
+    return instance.approve("0xb9779547EdcCAbC4a9Bc10c2444DBe02A56dEc20", Coin_Approve, {from: account});   //코인컨트랙 바뀌면 반드시 바꿔야함
+  }).then(function() {
+    $('#Coin_Approve').val('');
+    //return App.callCar();
+    
+  })
+    console.log(account);
+  });
+},
+
+deposit: function() {	
+
+  //var Trade_Num = $('#Trade_Num').val();
+web3.eth.getAccounts(function(error, accounts){
+  if(error) {
+    console.log(error);
+  }
+  
+  var account = accounts[0];
+ 
+
+App.contracts.TCTDapp.deployed().then(function(instance){
+   instance.deposit(2);   //거래번호 자동으로 등록되도록 '1'을 바꿔야함
+}).then(function() {
+  //return App.callCar();
+  
+});
+  console.log(account);
+});
+},
+
+
+Create: function() {	
+
+  //var Trade_Num = $('#Trade_Num').val();
+web3.eth.getAccounts(function(error, accounts){
+  if(error) {
+    console.log(error);
+  }
+  
+  var account = accounts[0];
+ 
+
+App.contracts.TCTDapp.deployed().then(function(instance){
+  return instance.escrowCreate("BBB",1000,"0x11209149dbded216f234fc517e93eaad83e969d8", {from: account});   //차대번호 , 가격, 구매자주소순서로 변수로 바꿔주기
+}).then(function() {
+  //$('#Trade_Num').val('');
+  //return App.callCar();
+  
+})
+  console.log(account);
+});
+},
+  
+
+buyerApprove: function() {	
+
+  //var Trade_Num = $('#Trade_Num').val();
+web3.eth.getAccounts(function(error, accounts){
+  if(error) {
+    console.log(error);
+  }
+  
+  var account = accounts[0];
+ 
+
+App.contracts.TCTDapp.deployed().then(function(instance){
+  return instance.Approve(2, {from: account});   //거래번호
+}).then(function() {
+  //$('#Trade_Num').val('');
+  //return App.callCar();
+  
+})
+  console.log(account);
+});
+},
+
+sellerApprove: function() {	
+
+  //var Trade_Num = $('#Trade_Num').val();
+web3.eth.getAccounts(function(error, accounts){
+  if(error) {
+    console.log(error);
+  }
+  
+  var account = accounts[0];
+ 
+
+App.contracts.TCTDapp.deployed().then(function(instance){
+  return instance.Approve(2, {from: account}); 
+}).then(function() {
+  //$('#Trade_Num').val('');
+  //return App.callCar();
+  
+})
+  console.log(account);
+});
+},
+
+
+
   listenToEvents: function() {
 	
   }
 };
+
+
+
+
 
 $(function() {
   $(window).load(function() {

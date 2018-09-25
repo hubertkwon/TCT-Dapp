@@ -100,7 +100,7 @@
                             <div class="widget">
                                 <h5 class="widgetheading">MENU</h5>
                                 <ul class="cat">
-                                    <li class="active"><i class="icon-angle-right"></i><a href="#tab1" data-toggle="tab">나의 TCC</a><span> </span></li>
+                                    <li class="active"><i class="icon-angle-right"></i><a href="#tab1" data-toggle="tab"><span id ="token_value"></span>나의 TCC</a><span> </span></li>
                                     <li><i class="icon-angle-right"></i><a href="#tab2" data-toggle="tab">나의 차</a><span></span></li>
                                     <li><i class="icon-angle-right"></i><a href="#tab3" data-toggle="tab">거래내역</a><span></span></li>
                                     <li><i class="icon-angle-right"></i><a href="#tab4" data-toggle="tab">개인정보변경</a><span></span></li>
@@ -121,11 +121,10 @@
                                     </div>
                                 </center><br>
                                 <center>
-                                    <h1><span class="fa fa-bitcoin"></span> 1100 TCC</h1>
+                                    <h1> <span id ="token_value1"> </span> TCT </h1>
                                     <button class="btn btn-theme">TCC 충전하기</button>
-
                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#ModalCenter">
-                                        출금가능액 설정
+                                        거래가능액 설정
                                     </button>
 
                                     <!-- Modal -->
@@ -139,15 +138,15 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <h5>TCC가 원활히 출금될 수 있도록 TCC출금가능 갯수를 입력해주세요.</h5>
+                                                    <h5>TCT가 거래에 쓰일 수 있도록 TCT토큰 출금가능 갯수를 입력해주세요.</h5>
                                                     <div class="col-lg-6 col-lg-offset-3">
                                                     <form class="form-search">
-                                                        <input class="form-control" type="text" placeholder="1000">
+                                                        <input class="form-control" id="Coin_Approve" type="text" placeholder="1000">
                                                     </form>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-theme">설정</button>
+                                                    <button type="button" onclick="App.CoinApprove(); return false;" class="btn btn-theme">설정</button>
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
 
                                                 </div>
@@ -171,7 +170,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <h5>출금할 계좌 주소와 갯수를 입력해주세요</h5>
-                                                        <h6>Enter Address for withgdraw And Number</h6>
+                                                        <h6>Enter Address for withdraw And Number</h6>
                                                         <div class="col-lg-6 col-lg-offset-3">
                                                         <form class="form-search">
                                                             주소<input class="form-control" type="text" placeholder="0x....." id="withdraw_Address">

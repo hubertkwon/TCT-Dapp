@@ -41,22 +41,22 @@
                         <a class="navbar-brand" href="index.html"><span>B</span>lockcar</a>
                     </div>
                     <div class="navbar-collapse collapse ">
-
-
+                       
+                       
                         <ul class="nav navbar-nav">
-                            <li><a href="#"><span class="fa fa-address-card-o"></span> <span id="contractAddress"></span></a></li>
+                            <li><a href="#"><span class="fa fa-address-card-o"></span> <span id = "contractAddress"></span></a></li>
                             <li><a href="#"></a></li>
-                            <li><a href="#"><span id="token_value"></span></a></li>
+                            <li><a href="#"><span id ="token_value"></span></a></li>
                             <li><a href="#">BCS <span class="fa fa-plus-square"></span></a></li>
                             <li><a href="#"></a></li>
-                            <li><a href="#"><span id="Ether_value"></span></a></li>
+                            <li><a href="#"><span id ="Ether_value"></span></a></li>
                             <li><a href="#">ETH <span class="fa fa-repeat"></span></a></li>
-
+                            
                         </ul>
                     </div>
                     <div class="navbar-collapse collapse ">
-
-
+                       
+                       
                         <ul class="nav navbar-nav">
                             <li class="active"><a href="index.html">Home</a></li>
                             <li class="dropdown">
@@ -74,7 +74,7 @@
                             <li><a><button type="button" class="btn btn-theme"><span id="isRegist"></span></button></a></li>
                         </ul>
                     </div>
-
+                    
                 </div>
             </div>
         </header>
@@ -100,16 +100,16 @@
 
                         <div id="sendmessage">Your message has been sent. Thank you!</div>
                         <div id="errormessage"></div>
-                        <form action="/process/addcar" method="post" role="form" class="contactForm">
+                        <form action="" method="post" role="form" class="contactForm">
                             <div class="form-group">
-                                차대번호<input type="text" id="car_registed_string" class="form-control" name="number" data-rule="required">
+                                차대번호<input type="text" id="car_registed_string" class="form-control" name="message"  data-rule="required">
                             </div>
 
                             <div class="form-group">
                                 구분<select id="region" name="region" class="form-control">
                                     <option value="">-- 구분 --</option>
-                                    <option value="국산차">국산차</option>
-                                    <option value="수입차">수입차</option>
+                                    <option value="domestic">국산차</option>
+                                    <option value="imported">수입차</option>
                                 </select>
                                 <div class="validation"></div>
                             </div>
@@ -251,12 +251,10 @@
                                 특이사항<textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="ex) 스마트키, 썬룹, 네비, 대차 등"></textarea>
                                 <div class="validation"></div>
                             </div>
-
-                            <div class="text-center"><button type="submit" class="btn btn-theme">등록&nbsp;&nbsp;&nbsp;
-                                    <button type="reset" class="btn btn-danger">취소</button>
-
-                            </div>
-
+                          
+                                <div class="text-center"><button type="button" onclick="App.setCar(); return false;" class="btn btn-theme">등록</button>&nbsp;&nbsp;&nbsp;
+                                    <button type="reset" class="btn btn-danger">취소</button></div>
+                            
                         </form>
                     </div>
                 </div>
@@ -385,7 +383,6 @@
             }
             google.maps.event.addDomListener(window, 'load', initialize_google_map);
         });
-
     </script>
     <script src="contactform/contactform.js"></script>
 

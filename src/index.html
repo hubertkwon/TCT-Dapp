@@ -73,17 +73,9 @@
                             <li><a href="repair.html">Repair Details</a></li>
                             <li><a href="mypage.html">MY PAGE</a></li>
                             <li><a id="isLogined" data-toggle="modal" data-target="#modalRegisterForm">
-                                <button type="button" class="btn btn-theme"></button></a></li>
+                                <button type="button" class="btn btn-theme"><span id="isRegist"></span></button></a></li>
                                
-                                
-                             
-                            
-                        </ul>
-                    </div>
-                    
-                </div>
-            </div>
-            <div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="false"><!--data-backrop쓰니깐 되긴하는데 뒤에 화면이 gray로 안바뀜요-->
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header text-center">
@@ -93,29 +85,33 @@
                                                 </button>
                                             </div>
                                             
-                                            <form action="/process/adduser" method="post">
+                                            
                                             <div class="modal-body mx-3">   <!-- 모달시작-->
                                               
                                                 <div class="md-form mb-5">
                                                     <div align="left"><i class="fa fa-user prefix grey-text"></i> 이름</div>
-                                                    <input type="text" id="name" name="name" class="form-control validate" placeholder="Name" required>
+                                                    <input type="text" id="Name" class="form-control validate" placeholder="Name" required>
 
                                                 </div>
                                                 <div class="md-form mb-5">
                                                     <div align="left"><i class="fa fa-phone prefix grey-text"></i> 연락처</div>
-                                                    <input type="text" id="phonenumber" name="phonenumber" class="form-control validate" placeholder="Phone Number">
+                                                    <input type="phoneNum" id="orangeForm-phoneNum" class="form-control validate" placeholder="Phone Number">
 
                                                 </div>
 
-                                           
+                                                <div class="md-form mb-4">
+                                                    <div align="left"><i class="fa fa-lock prefix grey-text"></i> 비밀번호</div>
+                                                    <input type="password" id="orangeForm-pass" class="form-control validate" placeholder="Password">
+
+                                                </div>
                                                 <div class="md-form mb-4">
                                                     <div align="left"><i class="fa fa-envelope prefix grey-text"></i> 이메일</div>
-                                                    <input type="email" id="email" name="email" class="form-control validate" placeholder="Email">
+                                                    <input type="email" id="orangeForm-email" class="form-control validate" placeholder="Email">
 
                                                 </div>
                                                 <div class="md-form mb-4">
                                                     <div align="left"><i class="fa fa-map-marker prefix grey-text"></i> 지역</div>
-                                                    <select class="form-control" name="location">
+                                                    <select class="form-control">
                                                         <option value="">지역선택</option>
                                                         <option value="seoul">서울</option>
                                                         <option value="incheon">인천</option>
@@ -140,13 +136,18 @@
 
                                             </div>
                                             <div class="modal-footer d-flex justify-content-center">
-                                                <button class="btn btn-theme" type="submit">회원등록</button><button class="btn btn-danger" type="reset">다시 작성</button>
+                                                <button class="btn btn-theme" onclick="App.setPerson(); return false;">회원등록</button><button class="btn btn-danger" type="reset">다시 작성</button>
                                             </div>
-                                            
-                                            </form>
                                         </div>
                                     </div>
                                 </div>
+                             
+                            
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
         </header>
         <section id="inner-headline">
             　

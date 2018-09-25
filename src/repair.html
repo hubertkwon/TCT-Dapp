@@ -144,10 +144,7 @@
                                                         <input type="radio" class="form-check-input" id="ok" value="Repair_Ok" name="inlineMaterialRadiosExample">
                                                         <label class="form-check-label">수리 완료</label>&nbsp;&nbsp;
                                                         <input type="radio" class="form-check-input" id="no" value="Repair_No" name="inlineMaterialRadiosExample" checked>
-                                                        <label class="form-check-label">수리 미완료</label>&nbsp;&nbsp;
-                                                        <input type="radio" class="form-check-input" id="ongoing" value="Repair_Ongoing" name="inlineMaterialRadiosExample">
-                                                        <label class="form-check-label">수리 진행중</label>&nbsp;&nbsp;
-                                                       
+                                                        <label class="form-check-label">수리 미완료</label>&nbsp;&nbsp;                                            
                                                     </div>
 
                             </div>
@@ -156,40 +153,40 @@
                                 <label>Repair Item</label>
                             </div>
                             <div class="col-lg-4"><br>
-                                <div class="form-check" align="left">
-                                <input type="checkbox" class="form-check-input" id="1">
+                                <div id="form_check_input1" class="form-check form-check-inline" align="left">
+                                <input type="radio" class="form-check-input" value="1"name="RpInfo">
                                 <label class="form-check-label" for="1">작동상태(공회전)</label>
-                                <input type="checkbox" class="form-check-input" id="2">
+                                <input type="radio" class="form-check-input" value="2" name="RpInfo">
                                 <label class="form-check-label" for="2">오일누유</label>
-                                    <input type="checkbox" class="form-check-input" id="3">
+                                    <input type="radio" class="form-check-input" value="3" name="RpInfo">
                                 <label class="form-check-label" for="3">냉각수누수</label><br>
-                                    <input type="checkbox" class="form-check-input" id="4">
+                                    <input type="radio" class="form-check-input" value="4" name="RpInfo">
                                 <label class="form-check-label" for="4">고압펌프(커먼레일)</label>
-                                    <input type="checkbox" class="form-check-input" id="5">
+                                    <input type="radio" class="form-check-input" value="5" name="RpInfo">
                                 <label class="form-check-label" for="5">변속기</label>
-                                    <input type="checkbox" class="form-check-input" id="6">
+                                    <input type="radio" class="form-check-input" value="6" name="RpInfo">
                                 <label class="form-check-label" for="6">클러치 어셈블리</label><br>
-                                    <input type="checkbox" class="form-check-input" id="7">
+                                    <input type="radio" class="form-check-input" value="7" name="RpInfo">
                                 <label class="form-check-label" for="7">동속죠인트</label>
-                                    <input type="checkbox" class="form-check-input" id="8">
+                                    <input type="radio" class="form-check-input" value="8" name="RpInfo">
                                 <label class="form-check-label" for="8">추진축 및 베어링</label><br>
-                                    <input type="checkbox" class="form-check-input" id="9">
+                                    <input type="radio" class="form-check-input" value="9" name="RpInfo">
                                 <label class="form-check-label" for="9">동력조향작동 오일 누유</label>
-                                    <input type="checkbox" class="form-check-input" id="10">
+                                    <input type="radio" class="form-check-input" value="10" name="RpInfo">
                                 <label class="form-check-label" for="10">작동상태 스티어링기어</label><br>
-                                    <input type="checkbox" class="form-check-input" id="11">
+                                    <input type="radio" class="form-check-input" value="11" name="RpInfo">
                                 <label class="form-check-label" for="11">브레이크오일누유</label>
-                                    <input type="checkbox" class="form-check-input" id="12">
+                                    <input type="radio" class="form-check-input" value="12" name="RpInfo">
                                 <label class="form-check-label" for="12">배력장치상태</label>
-                                    <input type="checkbox" class="form-check-input" id="13">
+                                    <input type="radio" class="form-check-input" value="13" name="RpInfo">
                                 <label class="form-check-label" for="13">발전기출력</label><br>
-                                    <input type="checkbox" class="form-check-input" id="14">
+                                    <input type="radio" class="form-check-input" value="14" name="RpInfo">
                                 <label class="form-check-label" for="14">시동모터</label>
-                                    <input type="checkbox" class="form-check-input" id="15">
+                                    <input type="radio" class="form-check-input" value="15" name="RpInfo">
                                 <label class="form-check-label" for="15">실내송풍모터</label>
-                                    <input type="checkbox" class="form-check-input" id="16">
+                                    <input type="radio" class="form-check-input" value="16" name="RpInfo">
                                 <label class="form-check-label" for="16">와이퍼모터기능</label>
-                                     <input type="checkbox" class="form-check-input" id="17">
+                                     <input type="radio" class="form-check-input" value="17" name="RpInfo">
                                 <label class="form-check-label" for="17">연료누출</label>
                                     
                             </div>
@@ -204,6 +201,7 @@
 
                             <div class="col-lg-6"><br>
                             <button class="btn btn-theme btn-rounded btn-block z-depth-0 my-4 waves-effect" type="button" onclick="App.setRepairInfo();return false;">등록</button>
+                            <button class="btn btn-theme btn-rounded btn-block z-depth-0 my-4 waves-effect" type="button" onclick="App.callCar();return false;">리페어정보 내놔</button>
                             </div>
 
                            
