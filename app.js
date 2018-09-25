@@ -1,56 +1,286 @@
-/*
-var express = require("express");
+var express = require('express')
+  , http = require('http')
+  , path = require('path');
+
+var bodyParser = require('body-parser')
+  , cookieParser = require('cookie-parser')
+  , static = require('serve-static')
+  , errorHandler = require('errorhandler');
+
+var expressErrorHandler = require('express-error-handler');
+
+var expressSession = require('express-session');
+ 
+
+var mysql = require('mysql');
+
+//===== MySQL 데이터베이스 연결 설정 =====//
+var pool      =    mysql.createPool({
+    connectionLimit : 10, 
+    host     : 'localhost',
+    user     : 'root',
+    password : '1111',
+    database : 'blockcar',
+    debug    :  false
+});
+
+
+
+// 익스프레스 객체 생성
 var app = express();
-var server = require("http").createServer(app);
-var io = require("socket.io")(server);
 
-server.listen(8080);
+// 설정 파일에 들어있는 port 정보 사용하여 포트 설정
+app.set('port', process.env.PORT || 3000);
 
-app.use(express.static("public"));
+// body-parser를 이용해 application/x-www-form-urlencoded 파싱
+app.use(bodyParser.urlencoded({ extended: false }))
 
-app.get("/", function(req, res){
-	res.sendFile(__dirname + "/public/html/index.html");
-})
+// body-parser를 이용해 application/json 파싱
+app.use(bodyParser.json())
 
-var Web3 = require("web3");
-web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-var tokenContract = web3.eth.contract([{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"count","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"getData","outputs":[{"name":"name","type":"string"},{"name":"data","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"dataBlock","outputs":[{"name":"name","type":"string"},{"name":"data","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"string"},{"name":"_data","type":"uint256"}],"name":"insertData","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]);
-var token = tokenContract.at("0xb10c532d14bf176ce9f95b7782b10c99f6355cb2");
+// public 폴더를 static으로 오픈
+app.use('/src', static(path.join(__dirname, 'src')));
+ 
+// cookie-parser 설정
+app.use(cookieParser());
+
+// 세션 설정
+app.use(expressSession({
+	secret:'my key',
+	resave:true,
+	saveUninitialized:true
+}));
+ 
 
 
-console.log(parseInt(token.dataBlock("0xf1c6d931c76f2f8082ba6ba9bdd9a7566df7ff2e",3)[1]) + 5);
-*/
 
-var Web3 = require("web3");
-web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-var contractInterface = web3.eth.contract([ { "constant": false, "inputs": [ { "name": "_number", "type": "uint256" }, { "name": "_data", "type": "string" } ], "name": "repairInfo", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "personDetail", "outputs": [ { "name": "name", "type": "string", "value": "" }, { "name": "phoneNumber", "type": "string", "value": "" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "_number", "type": "uint256" }, { "name": "_model", "type": "string" }, { "name": "_owner", "type": "address" } ], "name": "setCar", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_name", "type": "string" }, { "name": "_phoneNumber", "type": "string" } ], "name": "setPerson", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "car", "outputs": [ { "name": "", "type": "bool", "value": false } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "carDetail", "outputs": [ { "name": "model", "type": "string", "value": "" }, { "name": "owner", "type": "address", "value": "0x0000000000000000000000000000000000000000" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "person", "outputs": [ { "name": "", "type": "bool", "value": false } ], "payable": false, "stateMutability": "view", "type": "function" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "from", "type": "address" }, { "indexed": false, "name": "number", "type": "uint256" }, { "indexed": false, "name": "data", "type": "string" } ], "name": "repairUpdate", "type": "event" } ]);
-var contract = contractInterface.at("0xC438677CC4DBc77F7c998361A8dFe57E816112Ab");
+//===== 라우팅 함수 등록 =====//
+
+// 라우터 객체 참조
+var router = express.Router();
 
 
-console.log(contract.car(1234));
 
-/*
-contract.setCar.sendTransaction(1234,"Model1","0xF1c6D931C76F2f8082Ba6BA9Bdd9a7566dF7fF2e",{
-	from:web3.eth.accounts[0],
-	gas:4000000});
-*/
-/*
 
-count값을 가져와서
-for(int a = 0; i<count;i++){
-console.log(token.dataBlock("0xf1c6d931c76f2f8082ba6ba9bdd9a7566df7ff2e",a));
+// 사용자 추가 라우팅 함수
+router.route('/process/addcar').post(function(req, res) {
+	console.log('/process/addcar 호출됨.');
 
+    var paramNumber = req.body.number || req.query.number;
+    var paramRegion = req.body.region;
+  
+
+	
+    console.log('요청 파라미터 : ' + paramNumber+ ',' + paramRegion);
+    
+    // pool 객체가 초기화된 경우, addUser 함수 호출하여 사용자 추가
+	if (pool) {
+		addCar(paramNumber, paramRegion, function(err, addedCar) {
+			// 동일한 id로 추가하려는 경우 에러 발생 - 클라이언트로 에러 전송
+			if (err) {
+                console.error('판매차 추가 중 에러 발생 : ' + err.stack);
+                
+                res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+				res.write('<h2>판매차 추가 중 에러 발생</h2>');
+                res.write('<p>' + err.stack + '</p>');
+				res.end();
+                
+                return;
+            }
+			
+            // 결과 객체 있으면 성공 응답 전송
+			if (addedCar) {
+				console.dir(addedCar);
+
+			
+	        	
+	        	
+				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+				res.write('<h2>판매차 추가 성공</h2>');
+				res.end();
+			} else {
+				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+				res.write('<h2>판매차 추가  실패</h2>');
+				res.end();
+			}
+		});
+	} else {  // 데이터베이스 객체가 초기화되지 않은 경우 실패 응답 전송
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		res.write('<h2>데이터베이스 연결 실패</h2>');
+		res.end();
+	}
+	
+});
+
+// 사용자 추가 라우팅 함수
+router.route('/process/adduser').post(function(req, res) {
+	console.log('/process/adduser 호출됨.');
+
+    var paramName = req.body.name || req.query.name;
+    var paramPhonenumber = req.body.phonenumber || req.query.phonenumber;
+    var paramEmail = req.body.email || req.query.email;
+    var paramLocation = req.body.location;
+
+	
+    console.log('요청 파라미터 : ' + paramName+ ',' + paramPhonenumber + ',' + paramEmail + ',' + paramLocation);
+    
+    // pool 객체가 초기화된 경우, addUser 함수 호출하여 사용자 추가
+	if (pool) {
+		addUser(paramName, paramPhonenumber, paramEmail, paramLocation, function(err, addedUser) {
+			// 동일한 id로 추가하려는 경우 에러 발생 - 클라이언트로 에러 전송
+			if (err) {
+                console.error('회원 추가 중 에러 발생 : ' + err.stack);
+                
+                res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+				res.write('<h2>회원 추가 중 에러 발생</h2>');
+                res.write('<p>' + err.stack + '</p>');
+				res.end();
+                
+                return;
+            }
+			
+            // 결과 객체 있으면 성공 응답 전송
+			if (addedUser) {
+				console.dir(addedUser);
+
+			
+	        	
+	        	
+				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+				res.write('<h2>회원 추가 성공</h2>');
+				res.end();
+			} else {
+				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+				res.write('<h2>회원 추가  실패</h2>');
+				res.end();
+			}
+		});
+	} else {  // 데이터베이스 객체가 초기화되지 않은 경우 실패 응답 전송
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		res.write('<h2>데이터베이스 연결 실패</h2>');
+		res.end();
+	}
+	
+});
+
+
+
+// 라우터 객체 등록
+app.use('/', router);
+
+
+
+//판매차를 등록하는 함수
+var addCar = function(number, region, callback) {
+	console.log('addCar 호출됨 : ' + number + ',' + region);
+	
+	// 커넥션 풀에서 연결 객체를 가져옴
+	pool.getConnection(function(err, conn) {
+        if (err) {
+        	if (conn) {
+                conn.release();  // 반드시 해제해야 함
+            }
+            
+            callback(err, null);
+            return;
+        }   
+        console.log('데이터베이스 연결 스레드 아이디 : ' + conn.threadId);
+
+    	// 데이터를 객체로 만듦
+    	var data = {number:number, region:region};
+    	
+        // SQL 문을 실행함
+        var exec = conn.query('insert into car set ?', data, function(err, result) {
+        	conn.release();  // 반드시 해제해야 함
+        	console.log('실행 대상 SQL : ' + exec.sql);
+        	
+        	if (err) {
+        		console.log('SQL 실행 시 에러 발생함.');
+        		console.dir(err);
+        		
+        		callback(err, null);
+        		
+        		return;
+        	}
+        	
+        	callback(null, result);
+        	
+        });
+        
+        conn.on('error', function(err) {      
+              console.log('데이터베이스 연결 시 에러 발생함.');
+              console.dir(err);
+              
+              callback(err, null);
+        });
+    });
+	
 }
-usinged integer
 
-voting 빼고
 
-BlackList
+//사용자를 등록하는 함수
+var addUser = function(name, phonenumber, email, location, callback) {
+	console.log('addUser 호출됨 : ' + name + ',' + phonenumber + ',' + email + ',' + location);
+	
+	// 커넥션 풀에서 연결 객체를 가져옴
+	pool.getConnection(function(err, conn) {
+        if (err) {
+        	if (conn) {
+                conn.release();  // 반드시 해제해야 함
+            }
+            
+            callback(err, null);
+            return;
+        }   
+        console.log('데이터베이스 연결 스레드 아이디 : ' + conn.threadId);
 
-arrest
+    	// 데이터를 객체로 만듦
+    	var data = {name:name, phonenumber:phonenumber, email:email, location:location};
+    	
+        // SQL 문을 실행함
+        var exec = conn.query('insert into user set ?', data, function(err, result) {
+        	conn.release();  // 반드시 해제해야 함
+        	console.log('실행 대상 SQL : ' + exec.sql);
+        	
+        	if (err) {
+        		console.log('SQL 실행 시 에러 발생함.');
+        		console.dir(err);
+        		
+        		callback(err, null);
+        		
+        		return;
+        	}
+        	
+        	callback(null, result);
+        	
+        });
+        
+        conn.on('error', function(err) {      
+              console.log('데이터베이스 연결 시 에러 발생함.');
+              console.dir(err);
+              
+              callback(err, null);
+        });
+    });
+	
+}
 
-crowdFunding
 
-Astro
 
-*/
+
+//===== 서버 시작 =====//
+
+// 프로세스 종료 시에 데이터베이스 연결 해제
+process.on('SIGTERM', function () {
+    console.log("프로세스가 종료됩니다.");
+});
+
+app.on('close', function () {
+	console.log("Express 서버 객체가 종료됩니다.");
+});
+
+// Express 서버 시작
+http.createServer(app).listen(app.get('port'), function(){
+  console.log('서버가 시작되었습니다. 포트 : ' + app.get('port'));
+});
+ 

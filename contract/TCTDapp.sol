@@ -87,7 +87,7 @@ contract TCTDapp is owned{
     
     struct repairRecipt{
         address from;
-        string repairInfo;
+        uint repairInfo;
         bool isRepaired;
     }//수리 정보
 
@@ -124,7 +124,7 @@ contract TCTDapp is owned{
     mapping(uint => Escrow) public escrows;
 
     //수리 정보 등록시 이벤트 등록
-    event repairUpdate(address from, string _carNumber, string data);
+    event repairUpdate(address from, string _carNumber, int data);
     //주인 변경 이벤트
     event changeOwner(address from, address to, string _carNumber);
     //사람 등록 이벤트
@@ -188,7 +188,7 @@ contract TCTDapp is owned{
         return(repairCount[carNumber]);
     }
 
-    function getRepairInfo(string _carNumber,uint _index) public view returns(address _from, string _repairInfo, bool _isRepaired){
+    function getRepairInfo(string _carNumber,uint _index) public view returns(address _from, uint _repairInfo, bool _isRepaired){
         require(bytes(_carNumber).length <= 32);
         bytes32 carNumber = stringToBytes32(_carNumber);
         require(repairCount[carNumber] > _index);
@@ -225,18 +225,16 @@ contract TCTDapp is owned{
     }
 
     //수리이력 등록
-    function setRepairInfo(string _carNumber,string _repairInfo,bool _isRepaired)public {
+    function setRepairInfo(string _carNumber,uint[] _repairInfo,bool[] _isRepaired)public {
         require(isPerson[msg.sender]);
         require(bytes(_carNumber).length <= 32);
         bytes32 carNumber = stringToBytes32(_carNumber);
         require(isCar[carNumber]);
 
-        uint count = repairCount[carNumber];
-        repairList[carNumber][count] = repairRecipt(msg.sender,_repairInfo,_isRepaired);
-        
+        for(uint i=0;i<_repairInfo.length;i++){
+        repairList[carNumber][repairCount[carNumber]] = repairRecipt(msg.sender,_repairInfo[i],_isRepaired[i]);
         repairCount[carNumber]++;
-
-        emit repairUpdate(msg.sender,_carNumber,_repairInfo);
+        }
     }
 
     //Escrow 생성

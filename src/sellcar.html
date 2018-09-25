@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Moderna - Bootstrap 3 flat corporate template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <!-- css -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
+    <link href="css/jcarousel.css" rel="stylesheet" />
+    <link href="css/flexslider.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+
+
+    <!-- Theme skin -->
+    <link href="skins/default.css" rel="stylesheet" />
+
+    <!-- =======================================================
+    Theme Name: Moderna
+    Theme URL: https://bootstrapmade.com/free-bootstrap-template-corporate-moderna/
+    Author: BootstrapMade
+    Author URL: https://bootstrapmade.com
+	======================================================= -->
+
+</head>
+
+<body>
+    <div id="wrapper">
+        <!-- start header -->
+        <header>
+            <div class="navbar navbar-default navbar-static-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="index.html"><span>B</span>lockcar</a>
+                    </div>
+                    <div class="navbar-collapse collapse ">
+
+
+                        <ul class="nav navbar-nav">
+                            <li><a href="#"><span class="fa fa-address-card-o"></span> <span id="contractAddress"></span></a></li>
+                            <li><a href="#"></a></li>
+                            <li><a href="#"><span id="token_value"></span></a></li>
+                            <li><a href="#">BCS <span class="fa fa-plus-square"></span></a></li>
+                            <li><a href="#"></a></li>
+                            <li><a href="#"><span id="Ether_value"></span></a></li>
+                            <li><a href="#">ETH <span class="fa fa-repeat"></span></a></li>
+
+                        </ul>
+                    </div>
+                    <div class="navbar-collapse collapse ">
+
+
+                        <ul class="nav navbar-nav">
+                            <li class="active"><a href="index.html">Home</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle " data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false">How To Use <b class=" icon-angle-down"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Typography</a></li>
+                                    <li><a href="#">Components</a></li>
+                                    <li><a href="#">Pricing box</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="buycar.html">Buy Car</a></li>
+                            <li><a href="sellcar.html">Sell Car</a></li>
+                            <li><a href="repair.html">Repair Details</a></li>
+                            <li><a href="mypage.html">MY PAGE</a></li>
+                            <li><a><button type="button" class="btn btn-theme"><span id="isRegist"></span></button></a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </header>
+        <!-- end header -->
+        <section id="inner-headline">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="breadcrumb">
+                            <li><a href="#"><i class="fa fa-home"></i></a><i class="icon-angle-right"></i></li>
+                            <li class="active">SELL CAR</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="content">
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <h4>판매하실 차량의 정보를 입력해주세요.</h4>
+
+                        <div id="sendmessage">Your message has been sent. Thank you!</div>
+                        <div id="errormessage"></div>
+                        <form action="/process/addcar" method="post" role="form" class="contactForm">
+                            <div class="form-group">
+                                차대번호<input type="text" id="car_registed_string" class="form-control" name="number" data-rule="required">
+                            </div>
+
+                            <div class="form-group">
+                                구분<select id="region" name="region" class="form-control">
+                                    <option value="">-- 구분 --</option>
+                                    <option value="국산차">국산차</option>
+                                    <option value="수입차">수입차</option>
+                                </select>
+                                <div class="validation"></div>
+                            </div>
+                            <div class="form-group">
+                                제조사<select id="maker" name="maker" class="form-control">
+                                    <option value="">-- 제조사 --</option>
+                                    <option class="domestic" value="hyundai">현대</option>
+                                    <option class="domestic" value="kia">기아</option>
+                                    <option class="domestic" value="daewoo">쉐보레/GM대우</option>
+                                    <option class="domestic" value="samsung">르노삼성</option>
+                                    <option class="domestic" value="ssangyong">쌍용</option>
+                                    <option class="domestic" value="genesis">제네시스</option>
+                                    <option class="imported" value="bmw">BMW</option>
+                                    <option class="imported" value="benz">벤츠</option>
+                                    <option class="imported" value="audi">아우디</option>
+                                    <option class="imported" value="volkswagen">폭스바겐</option>
+                                    <option class="imported" value="mini">미니</option>
+                                    <option class="imported" value="porcshe">포르쉐</option>
+                                    <option class="imported" value="lexus">렉서스</option>
+                                    <option class="imported" value="infiniti">인피니티</option>
+                                </select>
+                                <div class="validation"></div>
+                            </div>
+                            <div class="form-group">
+                                모델<select id="model" name="model" class="form-control">
+                                    <option value="">-- 모델 --</option>
+                                    <option value="grandeur" class="hyundai">그랜져</option>
+                                    <option value="sonata" class="hyundai">쏘나타</option>
+                                    <option value="santafe" class="hyundai">싼타페</option>
+                                    <option value="k3" class="kia">K3</option>
+                                    <option value="k5" class="kia">K5</option>
+                                    <option value="k7" class="kia">K7</option>
+                                    <option value="k9" class="kia">K9</option>
+                                </select>
+                                <div class="validation"></div>
+                            </div>
+                            <div class="form-group">
+                                등급<select id="detail" name="detail" class="form-control">
+                                    <option value="">-- 등급 --</option>
+                                    <option value="grandeur-ig" class="grandeur">그랜져IG</option>
+                                    <option value="grandeur-ig-hybrid" class="grandeur">그랜져IG 하이브리드</option>
+                                    <option value="grandeur-hg" class="grandeur">그랜져HG</option>
+                                    <option value="grandeur-hybrid" class="grandeur">그랜져 하이브리드</option>
+                                    <option value="sonata-newrise" class="sonata">쏘나타 뉴 라이즈</option>
+                                    <option value="sonata-newrise-hybrid" class="sonata">쏘나타 뉴 라이즈 하이브리드</option>
+                                    <option value="sonata-lf" class="sonata">LF소나타</option>
+                                    <option value="santafe-tm" class="santafe">싼타페TM</option>
+                                    <option value="santafe-theprime" class="santafe">싼타페 더 프라임</option>
+                                    <option value="santafe-dm" class="santafe">싼타페DM</option>
+                                </select>
+                                <div class="validation"></div>
+                            </div>
+                            <script src="//code.jquery.com/jquery.min.js"></script>
+                            <script src='//rawgit.com/tuupola/jquery_chained/master/jquery.chained.min.js'></script>
+                            <script>
+                                $("#maker").chained("#region");
+                                                $("#model").chained("#maker");
+                                                $("#detail").chained("#model");
+                                            </script>
+
+                            <div class="form-group">
+                                변속기<select class="form-control">
+                                    <option value="">-- 변속기 --</option>
+                                    <option value="auto">자동</option>
+                                    <option value="manual">수동</option>
+                                    <option value="dual">듀얼 클러치</option>
+                                    <option value="cvt">CVT</option>
+                                </select>
+
+                            </div>
+                            <div class="form-group">
+                                년식
+
+                                <input type="month" class="form-control">
+
+                            </div>
+                            <div class="form-group">
+                                연료<select class="form-control">
+                                    <option value="">-- 연료 --</option>
+                                    <option value="diesel">경유</option>
+                                    <option value="gasoline">휘발유</option>
+                                    <option value="lpg">LPG</option>
+                                    <option value="alsolpg">LPG겸용</option>
+                                    <option value="hybrid">하이브리드</option>
+                                    <option value="etc">기타</option>
+                                </select>
+
+                            </div>
+                            <div class="form-group">
+                                사고유무<select class="form-control">
+                                    <option value="">-- 사고유무 --</option>
+                                    <option value="no">무사고</option>
+                                    <option value="yes">사고</option>
+
+                                </select>
+
+                            </div>
+                            <div class="form-group">
+                                주행거리<select class="form-control">
+                                    <option value="">-- 주행거리 --</option>
+                                    <option value="5000">1만km 이하</option>
+                                    <option value="15000">1만km~2만km</option>
+                                    <option value="25000">2만km~3만km</option>
+                                    <option value="35000">3만km~4만km</option>
+                                    <option value="45000">4만km~5만km</option>
+                                    <option value="55000">5만km~6만km</option>
+                                    <option value="65000">6만km~7만km</option>
+                                    <option value="75000">7만km~8만km</option>
+                                    <option value="85000">8만km~9만km</option>
+                                    <option value="95000">9만km~10만km</option>
+                                    <option value="105000">10만km 이상</option>
+                                </select>
+
+                            </div>
+                            <div class="form-group">
+                                지역<select class="form-control">
+                                    <option value="">-- 지역 --</option>
+                                    <option value="seoul">서울</option>
+                                    <option value="incheon">인천</option>
+                                    <option value="sejong">세종</option>
+                                    <option value="daejeon">대전</option>
+                                    <option value="daegu">대구</option>
+                                    <option value="kwangju">광주</option>
+                                    <option value="ulsan">울산</option>
+                                    <option value="busan">부산</option>
+                                    <option value="kyeongkido">경기도</option>
+                                    <option value="kangwondo">강원도</option>
+                                    <option value="chungcheongbukdo">충청북도</option>
+                                    <option value="chungcheongnamdo">충청남도</option>
+                                    <option value="gyeongsangbukdo">경상북도</option>
+                                    <option value="gyeongsangnamdo">경상남도</option>
+                                    <option value="jeollabukdo">전라북도</option>
+                                    <option value="jeollanamdo">전라남도</option>
+                                    <option value="jeju">제주도</option>
+                                </select>
+
+                            </div>
+                            <div class="form-group">
+                                특이사항<textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="ex) 스마트키, 썬룹, 네비, 대차 등"></textarea>
+                                <div class="validation"></div>
+                            </div>
+
+                            <div class="text-center"><button type="submit" class="btn btn-theme">등록&nbsp;&nbsp;&nbsp;
+                                    <button type="reset" class="btn btn-danger">취소</button>
+
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="widget">
+                            <h5 class="widgetheading">Get in touch with us</h5>
+                            <address>
+                                <strong>Moderna company Inc</strong><br>
+                                Modernbuilding suite V124, AB 01<br>
+                                Someplace 16425 Earth </address>
+                            <p>
+                                <i class="icon-phone"></i> (123) 456-7890 - (123) 555-7891 <br>
+                                <i class="icon-envelope-alt"></i> email@domainname.com
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="widget">
+                            <h5 class="widgetheading">Pages</h5>
+                            <ul class="link-list">
+                                <li><a href="#">Press release</a></li>
+                                <li><a href="#">Terms and conditions</a></li>
+                                <li><a href="#">Privacy policy</a></li>
+                                <li><a href="#">Career center</a></li>
+                                <li><a href="#">Contact us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="widget">
+                            <h5 class="widgetheading">Latest posts</h5>
+                            <ul class="link-list">
+                                <li><a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a></li>
+                                <li><a href="#">Pellentesque et pulvinar enim. Quisque at tempor ligula</a></li>
+                                <li><a href="#">Natus error sit voluptatem accusantium doloremque</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="widget">
+                            <h5 class="widgetheading">Flickr photostream</h5>
+                            <div class="flickr_badge">
+                                <script type="text/javascript" src="http://www.flickr.com/badge_code_v2.gne?count=8&amp;display=random&amp;size=s&amp;layout=x&amp;source=user&amp;user=34178660@N03"></script>
+                            </div>
+                            <div class="clear">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="sub-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="copyright">
+                                <p>&copy; Moderna Theme. All right reserved.</p>
+                                <div class="credits">
+                                    <!--
+                    All the links in the footer should remain intact.
+                    You can delete the links only if you purchased the pro version.
+                    Licensing information: https://bootstrapmade.com/license/
+                    Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=Moderna
+                  -->
+                                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ul class="social-network">
+                                <li><a href="#" data-placement="top" title="Facebook"><i class="fa fa-facebook"></i></a></li>
+                                <li><a href="#" data-placement="top" title="Twitter"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="#" data-placement="top" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href="#" data-placement="top" title="Pinterest"><i class="fa fa-pinterest"></i></a></li>
+                                <li><a href="#" data-placement="top" title="Google plus"><i class="fa fa-google-plus"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
+    <!-- javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.easing.1.3.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.fancybox.pack.js"></script>
+    <script src="js/jquery.fancybox-media.js"></script>
+    <script src="js/google-code-prettify/prettify.js"></script>
+    <script src="js/portfolio/jquery.quicksand.js"></script>
+    <script src="js/portfolio/setting.js"></script>
+    <script src="js/jquery.flexslider.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8HeI8o-c1NppZA-92oYlXakhDPYR7XMY"></script>
+    <script src="js/animate.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/utf8.js"></script>
+    <script>
+        jQuery(document).ready(function($) {
+            //Google Map
+            var get_latitude = $('#google-map').data('latitude');
+            var get_longitude = $('#google-map').data('longitude');
+
+            function initialize_google_map() {
+                var myLatlng = new google.maps.LatLng(get_latitude, get_longitude);
+                var mapOptions = {
+                    zoom: 14,
+                    scrollwheel: false,
+                    center: myLatlng
+                };
+                var map = new google.maps.Map(document.getElementById('google-map'), mapOptions);
+                var marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map
+                });
+            }
+            google.maps.event.addDomListener(window, 'load', initialize_google_map);
+        });
+
+    </script>
+    <script src="contactform/contactform.js"></script>
+
+</body>
+
+</html>
